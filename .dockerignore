@@ -1,0 +1,15 @@
+.git
+.worktrees
+node_modules
+.next
+.env*
+src/generated
+prisma/**/*.db
+prisma/**/*.db-journal
+public/uploads
+scoring/essays
+scoring/results
+scoring/calibration
+*.tsbuildinfo
+.DS_Store
+TASKS.md

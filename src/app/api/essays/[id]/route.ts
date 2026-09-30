@@ -1,7 +1,7 @@
 import { unlink } from "node:fs/promises";
-import path from "node:path";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { resolveUploadPath } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
@@ -31,12 +31,8 @@ export async function DELETE(_: Request, { params }: Params) {
   }
 
   for (const image of essay.images) {
-    const safePublicPath = image.publicPath.startsWith("/")
-      ? image.publicPath.slice(1)
-      : image.publicPath;
-    const absPath = path.join(process.cwd(), "public", safePublicPath);
     try {
-      await unlink(absPath);
+      await unlink(resolveUploadPath(image.publicPath));
     } catch {
       // 文件不存在或无法删除时跳过，不阻断数据库删除流程
     }

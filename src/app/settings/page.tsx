@@ -92,7 +92,7 @@ export default function SettingsPage() {
             value={config.apiKey}
             onChange={(e) => setConfig((c) => ({ ...c, apiKey: e.target.value }))}
             className="field"
-            placeholder="sk-..."
+            placeholder={config.apiKeyHint ? `已设置（${config.apiKeyHint}），留空不修改` : "sk-..."}
           />
           <p className="text-xs text-gray-500">用于 OCR、匹配和评分的 AI 接口密钥</p>
         </div>

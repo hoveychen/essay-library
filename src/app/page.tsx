@@ -34,7 +34,7 @@ const cards = [
   {
     href: "/settings",
     title: "模型配置",
-    desc: "配置 OpenRouter 模型和 Prompt。",
+    desc: "配置 DeepSeek 模型和 Prompt。",
   },
 ];
 

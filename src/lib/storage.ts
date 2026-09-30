@@ -7,7 +7,7 @@ import sharp from "sharp";
 // In development, fall back to public/uploads so Next.js can serve them as static files.
 const uploadDir = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "public", "uploads");
 
-// Kimi K2.5 视觉模型有效处理范围：长边不超过 1800px
+// OCR 图片长边压到 1800px 以内
 // JPEG quality=85 在保证手写字迹可读性的前提下大幅压缩文件体积
 const MAX_SIDE = 1800;
 const JPEG_QUALITY = 85;

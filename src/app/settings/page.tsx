@@ -6,9 +6,9 @@ import { AppConfig, getSettings } from "@/lib/client-api";
 const defaultConfig: AppConfig = {
   ocrPrompt: "",
   matchPrompt: "",
-  ocrModel: "moonshotai/kimi-k2.5",
-  matchModel: "moonshotai/kimi-k2.5",
-  scoringModel: "moonshotai/kimi-k2.5",
+  ocrModel: "deepseek-flash",
+  matchModel: "deepseek-flash",
+  scoringModel: "deepseek-flash",
   apiKey: "",
 };
 
@@ -86,13 +86,13 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-1">
-          <label>OpenRouter API Key</label>
+          <label>DeepSeek API Key</label>
           <input
             type="password"
             value={config.apiKey}
             onChange={(e) => setConfig((c) => ({ ...c, apiKey: e.target.value }))}
             className="field"
-            placeholder="sk-or-v1-..."
+            placeholder="sk-..."
           />
           <p className="text-xs text-gray-500">用于 OCR、匹配和评分的 AI 接口密钥</p>
         </div>

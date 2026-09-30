@@ -42,11 +42,11 @@ if ENV_PATH.exists():
             k, v = line.split("=", 1)
             env_vars[k.strip()] = v.strip().strip('"')
 
-OPENROUTER_API_KEY = env_vars.get("OPENROUTER_API_KEY", "")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+DEEPSEEK_API_KEY = env_vars.get("DEEPSEEK_API_KEY", "")
+DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
 # Read MODEL from score.py so the two scripts stay in sync automatically
 _SCORE_PY = CALIB_DIR.parent / "score.py"
-MODEL = "moonshotai/kimi-k2.5"  # fallback
+MODEL = "deepseek-flash"  # fallback
 for _line in _SCORE_PY.read_text(encoding="utf-8").splitlines():
     if _line.strip().startswith("MODEL"):
         MODEL = _line.split("=", 1)[1].strip().strip('"').strip("'")
@@ -77,7 +77,7 @@ DIMENSION_MAX: dict[str, int] = {
 
 def check_prerequisites() -> None:
     """Fail fast with clear messages if any required file is missing."""
-    assert OPENROUTER_API_KEY, "OPENROUTER_API_KEY not found in .env"
+    assert DEEPSEEK_API_KEY, "DEEPSEEK_API_KEY not found in .env"
 
     manifest = ESSAYS_DIR / "_manifest.json"
     assert manifest.exists(), f"Manifest not found: {manifest}"
@@ -143,17 +143,15 @@ def build_user_message(essay: dict) -> str:
 # API call — retries ALL non-200 statuses, not just 429
 # ---------------------------------------------------------------------------
 
-async def call_openrouter(
+async def call_deepseek(
     session: aiohttp.ClientSession,
     system_prompt: str,
     user_message: str,
     label: str = "",
 ) -> dict:
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:3000",
-        "X-Title": "Essay Calibration",
     }
     payload = {
         "model": MODEL,
@@ -172,7 +170,7 @@ async def call_openrouter(
             await asyncio.sleep(3)
         try:
             async with session.post(
-                OPENROUTER_URL,
+                DEEPSEEK_URL,
                 headers=headers,
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=120),
@@ -201,7 +199,7 @@ async def score_essay(
 ) -> dict:
     label = f"{essay.get('studentName', '?')} / {dim_key}"
     user_msg = build_user_message(essay)
-    result = await call_openrouter(session, prompt, user_msg, label=label)
+    result = await call_deepseek(session, prompt, user_msg, label=label)
 
     raw_score = result.get("score", -1)
     dim_max = DIMENSION_MAX[dim_key]

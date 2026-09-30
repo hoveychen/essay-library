@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Batch scoring script for essays using 4 scoring agents.
-Calls OpenRouter API with each scoring prompt for each essay.
+Calls DeepSeek API with each scoring prompt for each essay.
 """
 import json
 import os
@@ -28,9 +28,9 @@ if ENV_PATH.exists():
             k, v = line.split("=", 1)
             env_vars[k.strip()] = v.strip().strip('"')
 
-OPENROUTER_API_KEY = env_vars.get("OPENROUTER_API_KEY", "")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "moonshotai/kimi-k2.5"
+DEEPSEEK_API_KEY = env_vars.get("DEEPSEEK_API_KEY", "")
+DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
+MODEL = "deepseek-flash"
 
 # Concurrency control
 MAX_CONCURRENT = 5
@@ -78,13 +78,11 @@ def build_user_message(essay: dict) -> str:
     return "\n\n".join(parts)
 
 
-async def call_openrouter(session: aiohttp.ClientSession, system_prompt: str, user_message: str) -> dict:
-    """Call OpenRouter API and return parsed JSON response."""
+async def call_deepseek(session: aiohttp.ClientSession, system_prompt: str, user_message: str) -> dict:
+    """Call DeepSeek API and return parsed JSON response."""
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:3000",
-        "X-Title": "Essay Scoring",
     }
     payload = {
         "model": MODEL,
@@ -99,7 +97,7 @@ async def call_openrouter(session: aiohttp.ClientSession, system_prompt: str, us
     async with semaphore:
         for attempt in range(3):
             try:
-                async with session.post(OPENROUTER_URL, headers=headers, json=payload, timeout=aiohttp.ClientTimeout(total=120)) as resp:
+                async with session.post(DEEPSEEK_URL, headers=headers, json=payload, timeout=aiohttp.ClientTimeout(total=120)) as resp:
                     if resp.status == 429:
                         wait = 2 ** (attempt + 1)
                         print(f"  Rate limited, waiting {wait}s...")
@@ -127,7 +125,7 @@ async def call_openrouter(session: aiohttp.ClientSession, system_prompt: str, us
 async def score_essay(session: aiohttp.ClientSession, essay: dict, dim_key: str, prompt: str) -> dict:
     """Score a single essay on a single dimension."""
     user_msg = build_user_message(essay)
-    result = await call_openrouter(session, prompt, user_msg)
+    result = await call_deepseek(session, prompt, user_msg)
     raw_score = result.get("score", -1)
     dim_max = DIMENSION_MAX[dim_key]
     # Prompt asks model for 0-100; stored score = round(raw × dimMax/100), clamped to [0, dimMax]

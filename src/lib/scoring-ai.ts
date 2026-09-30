@@ -5,7 +5,7 @@ import {
   SCORING_DIMENSIONS,
   type ScoringDimensionKey,
 } from "@/lib/config";
-import { callOpenRouter } from "@/lib/openrouter";
+import { callDeepSeek } from "@/lib/deepseek";
 import { prisma } from "@/lib/prisma";
 
 const SCORING_LEVELS = ["一等", "二等", "三等", "四等"] as const;
@@ -76,7 +76,7 @@ export async function scoreEssay(
 
   const userMessage = buildUserMessage(essay);
 
-  const content = await callOpenRouter({
+  const content = await callDeepSeek({
     model: config.scoringModel,
     responseFormatJson: true,
     messages: [

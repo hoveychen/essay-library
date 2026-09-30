@@ -1,6 +1,6 @@
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
-type OpenRouterMessage = {
+type ChatMessage = {
   role: "system" | "user" | "assistant";
   content:
     | string
@@ -12,30 +12,28 @@ type OpenRouterMessage = {
 
 type ChatOptions = {
   model: string;
-  messages: OpenRouterMessage[];
+  messages: ChatMessage[];
   responseFormatJson?: boolean;
   /** 当 HTTP 响应头到达时调用（意味着服务端已收到完整请求体，即上传完成） */
   onUploadComplete?: () => void;
 };
 
-export async function callOpenRouter({
+export async function callDeepSeek({
   model,
   messages,
   responseFormatJson = false,
   onUploadComplete,
 }: ChatOptions): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    throw new Error("缺少 OPENROUTER_API_KEY，请先在 .env 配置。");
+    throw new Error("缺少 DEEPSEEK_API_KEY，请先在 .env 或设置页配置。");
   }
 
-  const response = await fetch(OPENROUTER_URL, {
+  const response = await fetch(DEEPSEEK_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": process.env.OPENROUTER_REFERER ?? "http://localhost:3000",
-      "X-Title": process.env.OPENROUTER_TITLE ?? "Essay Library",
     },
     body: JSON.stringify({
       model,
@@ -52,7 +50,7 @@ export async function callOpenRouter({
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`OpenRouter 请求失败: ${response.status} ${errText}`);
+    throw new Error(`DeepSeek 请求失败: ${response.status} ${errText}`);
   }
 
   const data = (await response.json()) as {
@@ -60,7 +58,7 @@ export async function callOpenRouter({
   };
   const content = data.choices?.[0]?.message?.content?.trim();
   if (!content) {
-    throw new Error("OpenRouter 未返回有效内容。");
+    throw new Error("DeepSeek 未返回有效内容。");
   }
   return content;
 }

@@ -32,7 +32,10 @@ export type AppConfig = {
   ocrModel: string;
   matchModel: string;
   scoringModel: string;
+  /** Write-only: empty keeps the current key */
   apiKey: string;
+  /** e.g. "…abcd" when a key is set, "" otherwise */
+  apiKeyHint?: string;
 };
 
 export async function getStudents(): Promise<Student[]> {

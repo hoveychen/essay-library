@@ -7,6 +7,11 @@ import sharp from "sharp";
 // In development, fall back to public/uploads so Next.js can serve them as static files.
 const uploadDir = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "public", "uploads");
 
+// publicPath 形如 /uploads/<fileName>，映射到 uploadDir 下的实际文件
+export function resolveUploadPath(publicPath: string) {
+  return path.join(uploadDir, path.basename(publicPath));
+}
+
 // OCR 图片长边压到 1800px 以内
 // JPEG quality=85 在保证手写字迹可读性的前提下大幅压缩文件体积
 const MAX_SIDE = 1800;

@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
-import path from "node:path";
 import sharp from "sharp";
 import { ensureAppConfig } from "@/lib/config";
 import { callDeepSeek } from "@/lib/deepseek";
 import { prisma } from "@/lib/prisma";
+import { resolveUploadPath } from "@/lib/storage";
 
 const OCR_MAX_SIDE = 1800;
 const OCR_JPEG_QUALITY = 85;
@@ -89,11 +89,7 @@ export async function runOcrForEssay(
     let fileSizeBytes = 0;
 
     for (const img of essay.images) {
-      const safePublicPath = img.publicPath.startsWith("/")
-        ? img.publicPath.slice(1)
-        : img.publicPath;
-      const absPath = path.join(process.cwd(), "public", safePublicPath);
-      const raw = await readFile(absPath);
+      const raw = await readFile(resolveUploadPath(img.publicPath));
       const compressed = await sharp(raw)
         .rotate()
         .resize(OCR_MAX_SIDE, OCR_MAX_SIDE, { fit: "inside", withoutEnlargement: true })

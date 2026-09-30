@@ -53,3 +53,6 @@ next-env.d.ts
 
 # git worktrees
 /.worktrees/
+
+# fleet plan scratchpad
+/TASKS.md

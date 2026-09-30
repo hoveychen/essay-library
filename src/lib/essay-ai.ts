@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { ensureAppConfig } from "@/lib/config";
-import { callOpenRouter } from "@/lib/openrouter";
+import { callDeepSeek } from "@/lib/deepseek";
 import { prisma } from "@/lib/prisma";
 
 const OCR_MAX_SIDE = 1800;
@@ -108,7 +108,7 @@ export async function runOcrForEssay(
 
     onProgress?.({ phase: "uploading", fileSizeBytes });
 
-    const text = await callOpenRouter({
+    const text = await callDeepSeek({
       model: config.ocrModel,
       messages: [
         { role: "system", content: "你是严格的OCR助手。" },
@@ -165,7 +165,7 @@ export async function runMatchForEssay(essayId: string) {
   });
 
   try {
-    const content = await callOpenRouter({
+    const content = await callDeepSeek({
       model: config.matchModel,
       responseFormatJson: true,
       messages: [
@@ -259,7 +259,7 @@ export async function runBatchMatchForStudent(
   }));
 
   try {
-    const content = await callOpenRouter({
+    const content = await callDeepSeek({
       model: config.matchModel,
       responseFormatJson: true,
       messages: [

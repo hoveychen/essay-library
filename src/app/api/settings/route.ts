@@ -8,7 +8,7 @@ export async function GET() {
   const config = await ensureAppConfig();
   return NextResponse.json({
     ...config,
-    apiKey: process.env.OPENROUTER_API_KEY ?? "",
+    apiKey: process.env.DEEPSEEK_API_KEY ?? "",
   });
 }
 
@@ -27,9 +27,9 @@ export async function PUT(req: Request) {
     const appDataDir = process.env.APP_DATA_DIR;
     if (appDataDir) {
       const envPath = path.join(appDataDir, ".env");
-      await writeFile(envPath, `OPENROUTER_API_KEY=${body.apiKey}\n`, "utf-8");
+      await writeFile(envPath, `DEEPSEEK_API_KEY=${body.apiKey}\n`, "utf-8");
     }
-    process.env.OPENROUTER_API_KEY = body.apiKey;
+    process.env.DEEPSEEK_API_KEY = body.apiKey;
   }
 
   const config = await ensureAppConfig();
@@ -45,6 +45,6 @@ export async function PUT(req: Request) {
   });
   return NextResponse.json({
     ...updated,
-    apiKey: process.env.OPENROUTER_API_KEY ?? "",
+    apiKey: process.env.DEEPSEEK_API_KEY ?? "",
   });
 }

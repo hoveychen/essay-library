@@ -6,7 +6,7 @@ Create a `.env` file:
 
 ```bash
 DATABASE_URL="file:./dev.db"
-OPENROUTER_API_KEY="sk-or-v1-..."
+DEEPSEEK_API_KEY="sk-..."
 ```
 
 Install dependencies, generate the Prisma client and set up the database:

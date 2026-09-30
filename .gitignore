@@ -50,3 +50,6 @@ next-env.d.ts
 /scoring/results/
 /scoring/calibration/essays/
 /scoring/calibration/results/
+
+# git worktrees
+/.worktrees/

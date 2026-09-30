@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f2f4f8;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-border: rgba(203, 213, 225, 0.92);
+  --surface-shadow: 0 14px 38px rgba(15, 23, 42, 0.14);
+  --foreground: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #0071e3;
 }
 
 @theme inline {
@@ -12,15 +17,160 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: radial-gradient(circle at 0% 0%, #ffffff 0%, #f2f4f8 42%, #eef1f7 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.45;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::selection {
+  background: rgba(0, 113, 227, 0.2);
+}
+
+.page-wrap {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  padding: 28px 20px;
+}
+
+.title-xl {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.title-lg {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.subtle {
+  color: var(--muted);
+}
+
+.glass-card {
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.status-bar {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(239, 246, 255, 0.9);
+  padding: 11px 14px;
+  color: #1e3a8a;
+  font-size: 14px;
+}
+
+.field {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d2d2d7;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.field:focus {
+  border-color: rgba(0, 113, 227, 0.55);
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.14);
+  outline: none;
+}
+
+.btn {
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 120ms ease, opacity 120ms ease, box-shadow 120ms ease;
+  border: 1px solid transparent;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  transform: none;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #0a84ff, #0071e3);
+  color: white;
+  box-shadow: 0 6px 18px rgba(0, 113, 227, 0.32);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #d2d2d7;
+  color: #1d1d1f;
+}
+
+.btn-success {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-warn {
+  background: #d97706;
+  color: white;
+}
+
+.nav-chip {
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.98);
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  transition: all 150ms ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.nav-chip:hover {
+  border-color: rgba(0, 113, 227, 0.4);
+  color: var(--accent);
+}
+
+.thumb {
+  border-radius: 12px;
+  border: 1px solid #d2d2d7;
+  object-fit: cover;
+}
+
+.apple-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.apple-table th,
+.apple-table td {
+  border-bottom: 1px solid #e5e5ea;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.apple-table thead th {
+  background: rgba(255, 255, 255, 0.82);
+  color: #3a3a3c;
+  font-weight: 600;
+}
+
+.apple-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.58);
 }

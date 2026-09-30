@@ -2,16 +2,25 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Create a `.env` file:
+
+```bash
+DATABASE_URL="file:./dev.db"
+OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
+Install dependencies, generate the Prisma client and set up the database:
+
+```bash
+npm ci
+npx prisma generate        # recent npm versions skip install scripts, so run this manually
+npx prisma migrate deploy
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

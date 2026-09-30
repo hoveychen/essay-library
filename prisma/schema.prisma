@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  essays    Essay[]
+}
+
+model Topic {
+  id           String   @id @default(cuid())
+  title        String
+  requirements String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  essays       Essay[]  @relation("EssayMatchedTopic")
+  suggestions  Essay[]  @relation("EssaySuggestedTopic")
+}
+
+model Essay {
+  id                  String       @id @default(cuid())
+  studentId           String
+  title               String?
+  rawText             String?
+  ocrStatus           OcrStatus    @default(PENDING)
+  ocrPromptSnapshot   String?
+  ocrError            String?
+  matchStatus         MatchStatus  @default(PENDING)
+  suggestedTopicId    String?
+  suggestedReason     String?
+  suggestedConfidence Float?
+  matchedTopicId      String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  matchedTopic        Topic?       @relation("EssayMatchedTopic", fields: [matchedTopicId], references: [id])
+  suggestedTopic      Topic?       @relation("EssaySuggestedTopic", fields: [suggestedTopicId], references: [id])
+  student             Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  images              EssayImage[]
+  scoringResults      ScoringResult[]
+  pipelineJobs        PipelineJob[]
+}
+
+model PipelineJob {
+  id        String   @id @default(cuid())
+  essayId   String
+  essay     Essay    @relation(fields: [essayId], references: [id], onDelete: Cascade)
+  status    String   @default("pending")  // pending|running|done|error
+  errorMsg  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EssayImage {
+  id           String   @id @default(cuid())
+  essayId      String
+  fileName     String
+  originalName String
+  publicPath   String
+  createdAt    DateTime @default(now())
+  essay        Essay    @relation(fields: [essayId], references: [id], onDelete: Cascade)
+}
+
+model ScoringResult {
+  id        String   @id @default(cuid())
+  essayId   String
+  dimension String   // topic_adherence_and_task | thesis_and_theme | evidence_and_material | logic_and_structure | language_and_expression
+  score     Int
+  brief     String
+  extra     String?  // optional JSON for extra fields (e.g. logic_and_structure CoT)
+  model     String   // model used for scoring
+  promptSnapshot String // prompt used for scoring
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  essay     Essay    @relation(fields: [essayId], references: [id], onDelete: Cascade)
+
+  @@unique([essayId, dimension])
+}
+
+model AppConfig {
+  id          Int      @id @default(autoincrement())
+  ocrPrompt   String
+  matchPrompt String
+  ocrModel    String
+  matchModel  String
+  scoringModel             String   @default("moonshotai/kimi-k2")
+  scoringPromptThesis      String   @default("")
+  scoringPromptEvidence    String   @default("")
+  scoringPromptLogic       String   @default("")
+  scoringPromptLanguage    String   @default("")
+  scoringPromptTopicAdherence String @default("")
+  updatedAt   DateTime @updatedAt
+}
+
+enum OcrStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAILED
+}
+
+enum MatchStatus {
+  PENDING
+  PROCESSING
+  SUGGESTED
+  CONFIRMED
+  FAILED
+}

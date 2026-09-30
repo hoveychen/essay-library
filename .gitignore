@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# local data (student essays / scores) — never commit
+/prisma/**/*.db
+/prisma/**/*.db-journal
+/public/uploads/
+/scoring/essays/
+/scoring/results/
+/scoring/calibration/essays/
+/scoring/calibration/results/
